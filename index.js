@@ -5,9 +5,7 @@
 var laeh2 = require('laeh2');
 var _x = laeh2._x;
 var _e = laeh2._e;
-var async = require('async-mini');
-var utilz = require('utilz');
-var _ = require('underscore');
+// var request = require('request');
 var http = require('http');
 var https = require('https');
 
@@ -16,26 +14,27 @@ var Client = function(opts) {
   this.http = this.opts.ssl ? https : http;
 };
 
-Client.prototype.cbx = function() {
-  // only return once
-  if(this.returned || !this.callback)
-    return;
-  this.returned = true;
-  this.callback.apply(this, Array.prototype.slice.call(arguments, 0));
-};
-
-Client.prototype.cmd = function(/* method, params, callback */) {
+Client.prototype.cmd = function() { // method, params, callback
 
   if(arguments.length < 2)
     _e('Invalid parameters; expected at least "method/batch" and "callback".');
 
   var method = arguments[0];
   var last = arguments.length - 1;
-  this.callback = arguments[last];
-  var cb = this.cbx;
   var params = [];
   for(var i = 1; i < last; i++)
     params.push(arguments[i]);
+
+  var callback = arguments[last];
+  var returned;
+
+  function cb() {
+    // only return once
+    if(returned || !callback)
+      return;
+    returned = true;
+    callback.apply(this, Array.prototype.slice.call(arguments, 0));
+  };
 
   var time = Date.now();
   var requestJSON;
@@ -47,6 +46,7 @@ Client.prototype.cmd = function(/* method, params, callback */) {
     requestJSON = [];
     method.forEach(function(batchCall, i) {
       requestJSON.push({
+        jsonrpc: '2.0',
         id: time + '-' + i,
         method: batchCall.method,
         params: batchCall.params
@@ -55,6 +55,7 @@ Client.prototype.cmd = function(/* method, params, callback */) {
   } else {
     // single rpc call
     requestJSON = {
+      jsonrpc: '1.0',
       id: time,
       method: method,
       params: params
@@ -69,8 +70,9 @@ Client.prototype.cmd = function(/* method, params, callback */) {
     host: this.opts.host || 'localhost',
     port: this.opts.port || 8332,
     method: 'POST',
-    path: path || '/',
+    path: this.opts.path || '/',
     headers: {
+      'Content-Type': 'text/plain',
       'Host': this.opts.host || 'localhost',
       'Content-Length': requestJSON.length
     },
@@ -102,6 +104,20 @@ Client.prototype.cmd = function(/* method, params, callback */) {
     // depending on whether it's got a result or an error, we call
     // emitSuccess or emitError on the promise.
     response.on('end', _x(cb, false, function() {
+
+  /*var opts = {
+    url: 'http://' + (this.opts.host || 'localhost') + ':' + (this.opts.port || 8332),
+    auth: {
+      user: 'username',
+      pass: 'password',
+      sendImmediately: false
+    },
+    headers: {
+      'content-type': 'text/plain'
+    }
+  };
+
+  request(opts, _x(cb, true, function(err, res, buffer) {*/
       var err;
 
       try {
@@ -164,7 +180,7 @@ Client.prototype.cmd = function(/* method, params, callback */) {
           cb(isError ? errors[0] : null, results[0]);
         }
       }
-
+  /* })); */
     }));
   }));
   request.end(requestJSON);

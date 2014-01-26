@@ -23,7 +23,7 @@ var client = new coind.Client({
 client.cmd('getbalance', '*', 6, function(err, balance) {
   if(err)
     // handle error; e.g. with laeh2
-  console.log('Balance:', balance);
+  console.log('Balance: %d', balance);
 });
 
 // batch request use:
@@ -40,7 +40,7 @@ client.cmd(batch, function(errors, addresses) {
   if(errors)
     // handle errors; e.g. with laeh2
   for(var i = 0; i < addresses.length; i++)
-    console.log('Address:', addresses[i]);
+    console.log('Address: %s', addresses[i]);
 });
 
 ```
@@ -79,7 +79,7 @@ $ cp bootstrap.dat ~/.litecoin/
 
 ### TODO
 
-Tests!
+More tests!
 
 ### License
 

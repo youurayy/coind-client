@@ -17,11 +17,11 @@
     "crypto-currency"
   ],
   "dependencies" : {
-    "laeh2": "*",
+    "laeh2": "*"
+  },
+  "devDependencies": {
     "async-mini": "*",
-    "underscore": "*",
-    "utilz": "*",
-    "request": "*"
+    "utilz": "*"
   },
   "repository": {
     "type": "git",
