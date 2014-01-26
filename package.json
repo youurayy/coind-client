@@ -1,0 +1,33 @@
+{
+  "name": "coind-client",
+  "version": "0.0.1",
+  "description": "JSON-RPC client for crypto-currency bitcoind-based daemons. Adheres to Node.js/JavaScript callback/control-flow conventions/style.",
+  "main": "./index.js",
+  "keywords": [
+    "bitcoin",
+    "litecoin",
+    "bitcoind",
+    "litecoind",
+    "altcoin",
+    "altcoind",
+    "rpc",
+    "json-rpc",
+    "client",
+    "cryptocurrency",
+    "crypto-currency"
+  ],
+  "dependencies" : {
+    "laeh2": "*",
+    "async-mini": "*",
+    "underscore": "*",
+    "utilz": "*",
+    "request": "*"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/ypocat/coind-client.git"
+  },
+  "engines": {
+    "node": ">= 0.8.0"
+  }
+}
